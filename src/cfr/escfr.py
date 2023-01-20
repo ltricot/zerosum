@@ -15,8 +15,7 @@ def eswalk(
         return game.payoff(player)
 
     if game.chance:
-        chances = game.chances()
-        (action,) = random.choices(list(chances.keys()), weights=list(chances.values()))
+        action = game.sample()
         return eswalk(game.apply(action), player, regrets, strategies)
 
     infoset = game.infoset(game.active)
