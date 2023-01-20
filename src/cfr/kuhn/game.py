@@ -22,13 +22,13 @@ class Action(enum.IntEnum):
 Card = int
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(frozen=True)
 class InfoSet:
     player: Player
     card: Card
     history: Tuple[Action, ...]
 
-    def actions(self):
+    def actions(self) -> Tuple[Action, ...]:
         if len(self.history) == 0:
             return (Action.CHECK, Action.BET, Action.FOLD)
         elif len(self.history) == 1:
@@ -46,7 +46,7 @@ class InfoSet:
             return (Action.CALL, Action.FOLD)
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(frozen=True)
 class Kuhn:
     history: Tuple[Action, ...] = ()
 
@@ -112,8 +112,8 @@ class Kuhn:
             history=self.history[2:],
         )
 
-    def apply(self, action: Action) -> Kuhn:
-        return Kuhn(self.history + (action,))
+    def apply(self, action: Action):
+        return self.__class__(self.history + (action,))
 
 
 if __debug__:

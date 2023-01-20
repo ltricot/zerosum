@@ -70,7 +70,7 @@ class RPS:
         return InfoSet(player)
 
     def apply(self, action: Action) -> RPS:
-        return RPS(self.history + (action,))
+        return self.__class__(self.history + (action,))
 
 
 if __debug__:

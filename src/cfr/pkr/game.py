@@ -1,13 +1,13 @@
 import eval7
 
 from typing import cast
-from typing import Tuple
+from typing import Tuple, Dict
 from dataclasses import dataclass
 import itertools
 import random
 import math
 
-from ..game import Player
+from ..game import Player, Game
 
 
 Card = eval7.Card
@@ -92,21 +92,27 @@ class InfoSet:
         # TODO: bottleneck
         yield from (Bet(bet) for bet in range(*self._bounds()))
 
-    def actions(self):
+    def _non_bet_actions(self):
         player = self.player
         cost = self.pips[1 - player] - self.pips[player]
 
         if cost == 0:
             if self.stacks[0] > self.pips[0] and self.stacks[1] > self.pips[1]:
-                return (Check(), *self._bets())
-            return (Check(),)
+                return (Check(),), True
+            return (Check(),), False
 
         if (
             cost < self.stacks[player] - self.pips[player]
             and self.stacks[1 - player] > self.pips[1 - player]
         ):
-            return (Fold(), Call(), *self._bets())
-        return (Fold(), Call())
+            return (Fold(), Call()), True
+        return (Fold(), Call()), False
+
+    def actions(self):
+        actions, bets = self._non_bet_actions()
+        if bets:
+            return (*actions, *self._bets())
+        return actions
 
 
 @dataclass(slots=True, frozen=True)
@@ -186,7 +192,7 @@ class RiverOfBlood:
 
         return False
 
-    def chances(self):
+    def chances(self) -> Dict[Action, float]:
         if len(self.history) == 0:
             # TODO: bottleneck
             return {
@@ -289,3 +295,7 @@ class RiverOfBlood:
             self.pips,
             self.pot,
         )
+
+
+if __debug__:
+    game: Game[Action, InfoSet] = RiverOfBlood()

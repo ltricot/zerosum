@@ -8,17 +8,20 @@ I = TypeVar("I", covariant=True)
 
 
 class Mapper(Protocol[I]):
-    def map(self, hand: Tuple[Card, Card], community: tuple[Card, ...]) -> I:
+    def __call__(self, hand: Tuple[Card, Card], community: tuple[Card, ...]) -> I:
         ...
 
 
-class PreFlop:
-    def map(self, hand: Tuple[Card, Card], community: tuple[Card, ...]):
-        if community:
-            raise ValueError
+def preflop(hand: Tuple[Card, Card], community: tuple[Card, ...]):
+    if community:
+        raise ValueError
 
-        a, b = hand
-        suited = a.suit == b.suit
-        ranks = tuple(sorted((a.rank, b.rank)))
+    a, b = hand
+    suited = a.suit == b.suit
+    ranks = tuple(sorted((a.rank, b.rank)))
 
-        return (suited, *ranks)
+    return (suited, *ranks)
+
+
+def naive(hand: Tuple[Card, Card], community: tuple[Card, ...]):
+    return preflop(hand, ())
