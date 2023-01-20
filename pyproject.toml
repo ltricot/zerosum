@@ -1,0 +1,22 @@
+[tool.poetry]
+authors = ["Loan Tricot <ltricot@gmail.com>"]
+description = "Poker bot."
+license = "MIT"
+name = "pkr"
+version = "0.1.0"
+
+packages = [
+  {include = "cfr", from = "src"},
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+eval7 = "^0.1.9"
+numba = "^0.56.4"
+numpy = "<1.24"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
