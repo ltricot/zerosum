@@ -88,6 +88,7 @@ class InfoSet:
         return minbound, maxbound + 1
 
     def _bets(self):
+        # TODO: bottleneck
         yield from (Bet(bet) for bet in range(*self._bounds()))
 
     def actions(self):
@@ -103,7 +104,7 @@ class InfoSet:
             cost < self.stacks[player] - self.pips[player]
             and self.stacks[1 - player] > self.pips[1 - player]
         ):
-            return (Fold(), Call(), self._bets())
+            return (Fold(), Call(), *self._bets())
         return (Fold(), Call())
 
 
@@ -142,7 +143,7 @@ class RiverOfBlood:
         if isinstance(last, Check):
             before = self.history[-2]
             if isinstance(before, Check):
-                return not self.terminal
+                return True
 
         return False
 
@@ -173,6 +174,8 @@ class RiverOfBlood:
 
         last = self.history[-1]
         if isinstance(last, Call):
+            if self._street == 0:
+                return len(self.history) >= 4
             return not self.terminal
 
         if isinstance(last, Check):
@@ -184,6 +187,7 @@ class RiverOfBlood:
 
     def chances(self):
         if len(self.history) == 0:
+            # TODO: bottleneck
             return {
                 Draw(hand): 1 / math.comb(52, 2)
                 for hand in itertools.combinations(_cards, 2)
@@ -192,6 +196,7 @@ class RiverOfBlood:
         elif len(self.history) == 1:
             hand = cast(Draw, self.history[0])
             deck = [card for card in _cards if card not in hand.hand]
+            # TODO: bottleneck
             return {
                 Draw(hand): 1 / math.comb(50, 2)
                 for hand in itertools.combinations(deck, 2)
@@ -206,16 +211,17 @@ class RiverOfBlood:
 
         street = self._street
         if street == 0:
+            # TODO: bottleneck
             return {
                 Flop(cards): 1 / math.comb(48, 3)
                 for cards in itertools.combinations(deck, 3)
             }
         elif street == 3:
-            return {Turn(card): 1 / len(deck) for card in deck}
+            return {Turn((card,)): 1 / len(deck) for card in deck}
         elif street == 4:
-            return {River(card): 1 / len(deck) for card in deck}
+            return {River((card,)): 1 / len(deck) for card in deck}
         else:
-            return {Run(card): 1 / len(deck) for card in deck}
+            return {Run((card,)): 1 / len(deck) for card in deck}
 
     def apply(self, action: Action):
         community = self.community

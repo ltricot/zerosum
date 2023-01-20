@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import numpy as np
+
 from typing import Protocol, TypeVar, NewType, Hashable
 from typing import Dict, Tuple
 
@@ -41,3 +43,17 @@ class Game(Protocol[A_inv, I]):
 
     def apply(self, action: A_inv) -> Game[A_inv, I]:
         ...
+
+
+def mc(game: Game):
+    while not game.terminal:
+        if game.chance:
+            chances = game.chances()
+            action = np.random.choice(list(chances.keys()), p=list(chances.values()))
+        else:
+            infoset = game.infoset(game.active)
+            actions = infoset.actions()
+            action = np.random.choice(actions)
+
+        yield action
+        game = game.apply(action)
