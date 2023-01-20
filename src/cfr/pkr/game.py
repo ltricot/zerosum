@@ -4,6 +4,7 @@ from typing import cast
 from typing import Tuple
 from dataclasses import dataclass
 import itertools
+import random
 import math
 
 from ..game import Player
@@ -222,6 +223,31 @@ class RiverOfBlood:
             return {River((card,)): 1 / len(deck) for card in deck}
         else:
             return {Run((card,)): 1 / len(deck) for card in deck}
+
+    def sample(self):
+        if len(self.history) == 0:
+            return Draw(tuple(random.sample(_cards, 2)))
+        elif len(self.history) == 1:
+            hand = cast(Draw, self.history[0])
+            deck = [card for card in _cards if card not in hand.hand]
+            return Draw(tuple(random.sample(deck, 2)))
+
+        seen = (
+            self.community
+            + cast(Draw, self.history[0]).hand
+            + cast(Draw, self.history[1]).hand
+        )
+        deck = [card for card in _cards if card not in seen]
+
+        street = self._street
+        if street == 0:
+            return Flop(tuple(random.sample(deck, 3)))
+        elif street == 3:
+            return Turn(tuple(random.sample(deck, 1)))
+        elif street == 4:
+            return River(tuple(random.sample(deck, 1)))
+        else:
+            return Run(tuple(random.sample(deck, 1)))
 
     def apply(self, action: Action):
         community = self.community

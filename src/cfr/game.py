@@ -34,6 +34,10 @@ class Game(Protocol[A_inv, I]):
     def chances(self) -> Dict[A_inv, float]:
         ...
 
+    # chance sampling
+    def sample(self) -> A_inv:
+        ...
+
     @property
     def active(self) -> Player:
         ...
@@ -48,8 +52,7 @@ class Game(Protocol[A_inv, I]):
 def mc(game: Game):
     while not game.terminal:
         if game.chance:
-            chances = game.chances()
-            action = np.random.choice(list(chances.keys()), p=list(chances.values()))
+            action = game.sample()
         else:
             infoset = game.infoset(game.active)
             actions = infoset.actions()

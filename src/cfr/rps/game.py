@@ -59,6 +59,9 @@ class RPS:
     def chances(self) -> Dict[Action, float]:
         raise NotImplementedError
 
+    def sample(self) -> Action:
+        raise NotImplementedError
+
     @property
     def active(self) -> Player:
         return cast(Player, len(self.history))

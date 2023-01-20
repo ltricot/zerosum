@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Tuple, Dict
 from typing import cast
 from dataclasses import dataclass
+import random
 import enum
 
 from ..game import Player, Game
@@ -96,6 +97,9 @@ class Kuhn:
             chances[k] = 1 / 2
 
         return chances
+
+    def sample(self) -> Action:
+        return random.choice(list(self.chances().keys()))
 
     @property
     def active(self) -> Player:
