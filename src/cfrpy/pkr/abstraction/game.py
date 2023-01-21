@@ -1,11 +1,10 @@
 from typing import Protocol
-from typing import Tuple
 from dataclasses import dataclass
 import math
 
 from ...game import Player, Game
 from ..game import RiverOfBlood as _RiverOfBlood, InfoSet as _InfoSet, Action, Bet
-from .rounds import Mapper, naive
+from .rounds import Mapper, ehs
 
 
 class Bucketer(Protocol):
@@ -17,11 +16,11 @@ def _default_bucketer(pot: int) -> int:
     # 10 levels
     if pot == 0:
         return -1
-    return math.ceil(math.log(pot, 6))
+    return math.ceil(math.log(pot, 4))
 
 
 _bucketer: Bucketer = _default_bucketer
-_mapper: Mapper = naive
+_mapper = ehs
 
 
 @dataclass(slots=True, frozen=True)
@@ -32,7 +31,7 @@ class InfoSet:
     def _abstraction(self):
         infoset = self._infoset
 
-        chance = _mapper(infoset.hand, infoset.community)
+        chance = _mapper(infoset.hand, ())
         player = infoset.player
 
         pot = _bucketer(infoset.pot)
@@ -42,9 +41,14 @@ class InfoSet:
         return (chance, player, pot, cost, actions)
 
     def _bets(self):
-        qties = {_bucketer(qty): qty for qty in range(*self._infoset._bounds())}
+        qties = {
+            _bucketer(qty): qty
+            for qty in range(*self._infoset._bounds())
+            if _bucketer(qty + 1) != _bucketer(qty)
+        }
         for qty in sorted(list(qties.values())):
-            yield Bet(qty)
+            if qty < 60:
+                yield Bet(qty)
 
     def actions(self):
         actions, bets = self._infoset._non_bet_actions()

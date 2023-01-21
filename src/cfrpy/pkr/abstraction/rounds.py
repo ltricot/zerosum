@@ -1,7 +1,8 @@
 from typing import Protocol, TypeVar
 from typing import Tuple
+from functools import lru_cache
 
-from .hands import Card
+from .hands import Card, hs
 
 
 I = TypeVar("I", covariant=True)
@@ -25,3 +26,9 @@ def preflop(hand: Tuple[Card, Card], community: tuple[Card, ...]):
 
 def naive(hand: Tuple[Card, Card], community: tuple[Card, ...]):
     return preflop(hand, ())
+
+
+@lru_cache
+def ehs(hand: Tuple[Card, Card], community: tuple[Card, ...]):
+    s = hs(hand, community, 30)
+    return round(100 * s) // 10

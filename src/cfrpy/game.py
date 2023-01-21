@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 
 from typing import Protocol, TypeVar, NewType, Hashable
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Any
 
 
 A_cov = TypeVar("A_cov", covariant=True)
@@ -57,6 +57,32 @@ def mc(game: Game):
             infoset = game.infoset(game.active)
             actions = infoset.actions()
             action = np.random.choice(actions)
+
+        yield action
+        game = game.apply(action)
+
+
+def normalize(dct: Dict[Any, float]):
+    denom = sum(dct.values())
+    if denom <= 0:
+        return {k: 1 / len(dct) for k in dct}
+    return {k: v / denom for k, v in dct.items()}
+
+
+def play(game: Game[A_inv, I], strategies: Dict[I, Dict[A_inv, float]]):
+    while not game.terminal:
+        if game.chance:
+            action = game.sample()
+        else:
+            infoset = game.infoset(game.active)
+            actions = infoset.actions()
+
+            if infoset in strategies:
+                p = np.asarray(list(normalize(strategies[infoset]).values()))
+                action = np.random.choice(actions, p=p)
+            else:
+                actions = infoset.actions()
+                action = np.random.choice(actions)
 
         yield action
         game = game.apply(action)
