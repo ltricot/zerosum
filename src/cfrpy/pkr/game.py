@@ -73,10 +73,12 @@ class InfoSet:
     hand: Tuple[Card, Card]
     community: Tuple[Card, ...]
 
-    player: int
+    player: Player
     stacks: Tuple[int, int]
     pips: Tuple[int, int]
     pot: int
+
+    history: Tuple[Action, ...]
 
     def _bounds(self):
         player = self.player
@@ -86,11 +88,12 @@ class InfoSet:
             self.stacks[1 - player] - self.pips[1 - player] + cost,
         )
         minbound = min(maxbound, cost + max(cost, 2))
-        return minbound, maxbound + 1
+        return minbound, maxbound
 
     def _bets(self):
         # TODO: bottleneck
-        yield from (Bet(bet) for bet in range(*self._bounds()))
+        lb, ub = self._bounds()
+        yield from (Bet(bet) for bet in range(lb, ub + 1))
 
     def _non_bet_actions(self):
         player = self.player
@@ -294,6 +297,7 @@ class RiverOfBlood:
             self.stacks,
             self.pips,
             self.pot,
+            self.history,
         )
 
 
