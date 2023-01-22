@@ -40,7 +40,7 @@ def identity(infoset: PInfoSet) -> Tuple[Action, ...]:
 
 @abstract(
     RiverOfBlood,
-    player * ehs(_hand_buckets) * singlebet * _pot * non_bet_actions * _bounds,
+    player * street * ehs(_hand_buckets) * singlebet * _pot * non_bet_actions * _bounds,
     withbets(bets),
 )
 @dataclass(slots=True, frozen=True)

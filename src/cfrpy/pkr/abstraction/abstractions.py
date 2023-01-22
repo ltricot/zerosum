@@ -31,7 +31,7 @@ def ehs(buckets: int):
     @cache
     def inner(infoset: PInfoSet):
         infoset = cast(InfoSet, infoset)
-        strength = hs(infoset.hand, infoset.community, 100)
+        strength = hs(infoset.hand, infoset.community, 200)
         return round(strength * buckets)
 
     return inner
@@ -66,11 +66,32 @@ def _unbucket(qty: int, base: int) -> int:
     return base ** qty
 
 
+def _linear_bucket(qty: int, base: int) -> int:
+    if qty == 0:
+        return -1
+    return math.ceil(qty / base)
+
+
+def _linear_unbucket(qty: int, base: int) -> int:
+    if qty == -1:
+        return 0
+    return base * qty
+
+
 def pot(base: int):
     @algebraic
     def inner(infoset: PInfoSet):
         infoset = cast(InfoSet, infoset)
         return _unbucket(_bucket(infoset.pot, base), base)
+
+    return inner
+
+
+def linearpot(base: int):
+    @algebraic
+    def inner(infoset: PInfoSet):
+        infoset = cast(InfoSet, infoset)
+        return _linear_unbucket(_linear_bucket(infoset.pot, base), base)
 
     return inner
 
