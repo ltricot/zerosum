@@ -10,9 +10,9 @@ import math
 from ..game import Player, Game
 
 
-Card = eval7.Card
-
+Card = int
 _cards = eval7.Deck().cards
+_ix_cards = list(range(52))
 
 
 @dataclass(slots=True, frozen=True)
@@ -143,7 +143,7 @@ class RiverOfBlood:
 
         if self._street < 5:
             return False
-        if self.community[-1].suit in (1, 2):
+        if _cards[self.community[-1]].suit in (1, 2):
             return False
 
         last = self.history[-1]
@@ -169,8 +169,8 @@ class RiverOfBlood:
         h0 = cast(Draw, self.history[0]).hand
         h1 = cast(Draw, self.history[1]).hand
 
-        s0 = eval7.evaluate(h0 + self.community)
-        s1 = eval7.evaluate(h1 + self.community)
+        s0 = eval7.evaluate(tuple(_cards[i] for i in h0 + self.community))
+        s1 = eval7.evaluate(tuple(_cards[i] for i in h1 + self.community))
 
         if s0 > s1:
             return pot // 2 if player == 0 else -pot // 2
@@ -202,12 +202,12 @@ class RiverOfBlood:
             # TODO: bottleneck
             return {
                 Draw(hand): 1 / math.comb(52, 2)
-                for hand in itertools.combinations(_cards, 2)
+                for hand in itertools.combinations(_ix_cards, 2)
             }
 
         elif len(self.history) == 1:
             hand = cast(Draw, self.history[0])
-            deck = [card for card in _cards if card not in hand.hand]
+            deck = [card for card in _ix_cards if card not in hand.hand]
             # TODO: bottleneck
             return {
                 Draw(hand): 1 / math.comb(50, 2)
@@ -219,7 +219,7 @@ class RiverOfBlood:
             + cast(Draw, self.history[0]).hand
             + cast(Draw, self.history[1]).hand
         )
-        deck = [card for card in _cards if card not in seen]
+        deck = [card for card in _ix_cards if card not in seen]
 
         street = self._street
         if street == 0:
@@ -237,10 +237,10 @@ class RiverOfBlood:
 
     def sample(self):
         if len(self.history) == 0:
-            return Draw(tuple(random.sample(_cards, 2)))
+            return Draw(tuple(random.sample(_ix_cards, 2)))
         elif len(self.history) == 1:
             hand = cast(Draw, self.history[0])
-            deck = [card for card in _cards if card not in hand.hand]
+            deck = [card for card in _ix_cards if card not in hand.hand]
             return Draw(tuple(random.sample(deck, 2)))
 
         seen = (
@@ -248,7 +248,7 @@ class RiverOfBlood:
             + cast(Draw, self.history[0]).hand
             + cast(Draw, self.history[1]).hand
         )
-        deck = [card for card in _cards if card not in seen]
+        deck = [card for card in _ix_cards if card not in seen]
 
         street = self._street
         if street == 0:

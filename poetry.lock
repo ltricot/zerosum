@@ -57,10 +57,24 @@ python-versions = ">=3.6.8"
 [package.extras]
 diagrams = ["railroad-diagrams", "jinja2"]
 
+[[package]]
+name = "structlog"
+version = "22.3.0"
+description = "Structured Logging for Python"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+dev = ["structlog"]
+docs = ["furo", "myst-parser", "sphinx", "sphinx-notfound-page", "sphinxcontrib-mermaid", "twisted"]
+tests = ["coverage", "freezegun (>=0.2.8)", "pretend", "pytest-asyncio (>=0.17)", "pytest (>=6.0)", "simplejson"]
+typing = ["mypy", "rich", "twisted"]
+
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "ba84e1626aef03cb8159ba052dc20889bc588e00bad49b5e46cf093854f0a02a"
+content-hash = "683a5c21a6984cbb671f074128b157e742d3a7b32837b812ad8972dd49ca0a68"
 
 [metadata.files]
 eval7 = []
@@ -72,3 +86,4 @@ pyparsing = [
     {file = "pyparsing-3.0.9-py3-none-any.whl", hash = "sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc"},
     {file = "pyparsing-3.0.9.tar.gz", hash = "sha256:2b020ecf7d21b687f219b71ecad3631f644a47f01403fa1d1036b0c6416d70fb"},
 ]
+structlog = []

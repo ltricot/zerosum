@@ -14,6 +14,7 @@ eval7 = "^0.1.9"
 numba = "^0.56.4"
 numpy = "<1.24"
 python = "^3.9"
+structlog = "^22.3.0"
 
 [tool.poetry.dev-dependencies]
 

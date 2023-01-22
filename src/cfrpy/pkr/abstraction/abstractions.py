@@ -1,3 +1,5 @@
+import eval7
+
 from typing import cast
 from typing import Tuple, Callable
 from functools import cache
@@ -7,6 +9,9 @@ from ...abstraction import algebraic
 from ...game import InfoSet as PInfoSet
 from ..game import InfoSet, Action
 from .hands import hs
+
+
+_cards = eval7.Deck().cards
 
 
 @algebraic
@@ -31,7 +36,9 @@ def ehs(buckets: int):
     @cache
     def inner(infoset: PInfoSet):
         infoset = cast(InfoSet, infoset)
-        strength = hs(infoset.hand, infoset.community, 200)
+        hand = (_cards[infoset.hand[0]], _cards[infoset.hand[1]])
+        community = tuple(_cards[i] for i in infoset.community)
+        strength = hs(hand, community, 200)
         return round(strength * buckets)
 
     return inner
