@@ -74,4 +74,4 @@ class RPS:
 
 
 if __debug__:
-    game: Game[Action, InfoSet] = RPS()
+    _: Game[Action, InfoSet] = RPS()

@@ -117,4 +117,4 @@ class Kuhn:
 
 
 if __debug__:
-    game: Game[Action, InfoSet] = Kuhn()
+    _: Game[Action, InfoSet] = Kuhn()

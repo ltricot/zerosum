@@ -158,10 +158,12 @@ class RiverOfBlood:
         return False
 
     def payoff(self, player: Player):
+        pot = self.pot + sum(self.pips)
+
         last = self.history[-1]
         if isinstance(last, Fold):
             if self.active == player:
-                return self.stacks[player] + self.pot - 400
+                return self.stacks[player] + pot - 400
             return self.stacks[player] - 400
 
         h0 = cast(Draw, self.history[0]).hand
@@ -171,9 +173,9 @@ class RiverOfBlood:
         s1 = eval7.evaluate(h1 + self.community)
 
         if s0 > s1:
-            return self.pot // 2 if player == 0 else -self.pot // 2
+            return pot // 2 if player == 0 else -pot // 2
         elif s1 > s0:
-            return self.pot // 2 if player == 1 else -self.pot // 2
+            return pot // 2 if player == 1 else -pot // 2
 
         return 0
 
@@ -302,4 +304,4 @@ class RiverOfBlood:
 
 
 if __debug__:
-    game: Game[Action, InfoSet] = RiverOfBlood()
+    _: Game[Action, InfoSet] = RiverOfBlood()

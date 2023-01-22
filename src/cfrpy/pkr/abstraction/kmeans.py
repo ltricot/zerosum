@@ -44,7 +44,7 @@ def _labels(vecs: npt.NDArray[np.float64], centroids: npt.NDArray[np.float64]):
 def kmeans(
     vecs: npt.NDArray[np.float64], centroids: npt.NDArray[np.float64], maxiter: int
 ):
-    k, d = centroids.shape
+    k, _ = centroids.shape
 
     for _ in range(maxiter):
         labels = _labels(vecs, centroids)
