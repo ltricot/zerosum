@@ -3,14 +3,24 @@
 
 from tqdm import tqdm
 
-from typing import Protocol, Generic, cast
-from typing import Callable
+from typing import Protocol, Generic
+from typing import Callable, Any
 from dataclasses import dataclass
 import itertools
 import math
 import abc
 
 from .game import Player, Game, A_inv, I
+
+
+def normalize(strategies: dict[Any, dict[Any, float]]):
+    def normalize(strat: dict[Any, float]):
+        total = sum(strat.values())
+        if total > 0:
+            return {a: p / total for a, p in strat.items()}
+        return {a: 1 / len(strat) for a in strat}
+
+    return {iset: normalize(strat) for iset, strat in strategies.items()}
 
 
 class Strategy(Protocol[A_inv, I]):
@@ -87,12 +97,10 @@ def play(game: Game[A_inv, I], p0: Strategy[A_inv, I], p1: Strategy[A_inv, I]):
         p0.apply(action)
         p1.apply(action)
 
-    # only zero sums
-    payoff = game.payoff(cast(Player, 0))
-    p0.payoff(payoff)
-    p1.payoff(-payoff)
+    p0.payoff(p := game.payoff(Player(0)))
+    p1.payoff(game.payoff(Player(1)))
 
-    return payoff
+    return p
 
 
 def match(

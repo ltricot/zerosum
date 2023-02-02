@@ -1,5 +1,24 @@
 from .algorithms import *
-from .abstraction import algebraic
+from .abstraction import algebraic, abstract
+from .game import Game, InfoSet, Player
+from .strategy import Strategy, play, match, normalize
 
 
-__all__ = ["algebraic", "Algorithm", "Runner", "CFR", "ESCFR", "ESCFRP", "ESLCFR"]
+__all__ = [
+    "algebraic",
+    "abstract",
+    "Algorithm",
+    "Runner",
+    "Game",
+    "InfoSet",
+    "Player",
+    "Strategy",
+    "play",
+    "match",
+    "normalize",
+    "CFR",
+    "ESCFR",
+    "ESCFRP",
+    "CFRP",
+    "ESLCFR",
+]
