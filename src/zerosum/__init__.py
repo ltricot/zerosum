@@ -18,6 +18,7 @@ __all__ = [
     "normalize",
     "CFR",
     "ESCFR",
+    "OSCFR",
     "ESCFRP",
     "CFRP",
     "ESLCFR",
