@@ -6,17 +6,31 @@ name = "pkr"
 version = "0.1.0"
 
 packages = [
-  {include = "cfrpy", from = "src"},
+  {include = "zerosum", from = "src"},
+  {include = "scripts"},
+  {include = "blood"},
 ]
 
+[tool.poetry.scripts]
+cfr = "scripts.train:main"
+hands = "scripts.hands:main"
+imperfect = "scripts.imperfect:main"
+mades = "scripts.mades:main"
+ochs = "scripts.ochs:main"
+play = "scripts.play:main"
+potentials = "scripts.potentials:main"
+tourny = "scripts.tournament:main"
+
 [tool.poetry.dependencies]
-eval7 = "^0.1.9"
+eval7 = {path = "lib/pyeval7"}
 numba = "^0.56.4"
 numpy = "<1.24"
 python = "^3.9"
 structlog = "^22.3.0"
+tqdm = "^4.64.1"
 
 [tool.poetry.dev-dependencies]
+pyright = "^1.1.292"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
