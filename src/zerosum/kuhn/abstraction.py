@@ -19,6 +19,10 @@ class InfoSet:
         # action abstraction
         return self._infoset.actions()
 
+    # both of the following methods MUST be implemented
+    # indeed, python dictionaries are hash maps which expects collisions,
+    # and deal with them by comparing keys :)
+
     def __hash__(self):
         # state abstraction
         return hash(self._abstraction)
