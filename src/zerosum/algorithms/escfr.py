@@ -78,6 +78,9 @@ class ESCFR(Generic[A_inv, I]):
 
 
 # Outcome Sampling CFR
+# TODO: implementation seems incorrect
+
+
 @dataclass
 class OSCFR(Generic[A_inv, I]):
     delta: float
