@@ -5,7 +5,7 @@ import structlog
 logger = structlog.get_logger(__name__)
 
 from typing import Generic, Protocol
-from typing import Callable, Optional
+from typing import Optional
 from dataclasses import dataclass
 import pathlib
 import pickle
@@ -27,14 +27,14 @@ class Implementation(Protocol[A_inv, I]):
         # how many nodes touched
         ...
 
-    def _run_iteration(self, game: Callable[[], Game[A_inv, I]]):
+    def _run_iteration(self, game: type[Game[A_inv, I]]):
         ...
 
 
 @dataclass
 class Algorithm(Generic[A_inv, I]):
     impl: Implementation[A_inv, I]
-    game: Callable[[], Game[A_inv, I]]
+    game: type[Game[A_inv, I]]
 
     def once(self):
         self.impl._run_iteration(self.game)
@@ -43,7 +43,7 @@ class Algorithm(Generic[A_inv, I]):
 @dataclass
 class Runner(Generic[A_inv, I]):
     impl: Implementation[A_inv, I]
-    game: Callable[[], Game[A_inv, I]]
+    game: type[Game[A_inv, I]]
 
     path: str | pathlib.Path
     until: int
@@ -78,7 +78,7 @@ class Runner(Generic[A_inv, I]):
     def load(
         cls,
         path: str | pathlib.Path,
-        game: Callable[[], Game[A_inv, I]],
+        game: type[Game[A_inv, I]],
         until: int,
         checkpt: Optional[int] = None,
     ):

@@ -1,5 +1,5 @@
 from typing import cast
-from typing import Optional, Union
+from typing import Optional, Union, ClassVar
 from dataclasses import dataclass
 
 from ..game import Player
@@ -36,8 +36,14 @@ Action = Union[Offer, Reject, Accept]
 
 @dataclass(slots=True, frozen=True)
 class Game:
+    players: ClassVar[int] = 2
+
     utility: int
     history: tuple[Action, ...] = ()
+
+    @classmethod
+    def default(cls):
+        return cls(3)
 
     @property
     def terminal(self):

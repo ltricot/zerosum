@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 
 from typing import Protocol, TypeVar, NewType, Hashable
-from typing import Any
+from typing import Any, ClassVar
 
 
 A_cov = TypeVar("A_cov", covariant=True)
@@ -18,8 +18,16 @@ class InfoSet(Hashable, Protocol[A_cov]):
 I = TypeVar("I", bound=InfoSet)
 Player = NewType("Player", int)
 
+_T = TypeVar("_T", bound="Game")
+
 
 class Game(Protocol[A_inv, I]):
+    players: ClassVar[int]
+
+    @classmethod
+    def default(cls: type[_T]) -> _T:
+        ...
+
     @property
     def terminal(self) -> bool:
         ...

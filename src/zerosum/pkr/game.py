@@ -1,6 +1,7 @@
 import eval7
 
 from typing import cast
+from typing import ClassVar
 from dataclasses import dataclass
 import itertools
 import random
@@ -144,6 +145,8 @@ class InfoSet:
 
 @dataclass(slots=True, frozen=True)
 class RiverOfBlood:
+    players: ClassVar[int] = 2
+
     history: tuple[Action, ...] = ()
     community: tuple[Card, ...] = ()
     active: Player = cast(Player, 0)
@@ -151,6 +154,10 @@ class RiverOfBlood:
     stacks: tuple[int, int] = (400, 400)
     pips: tuple[int, int] = (1, 2)
     pot: int = 0
+
+    @classmethod
+    def default(cls):
+        return cls()
 
     @property
     def _street(self):

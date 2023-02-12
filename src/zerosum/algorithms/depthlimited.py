@@ -1,5 +1,4 @@
-from typing import cast, Generic
-from typing import Callable
+from typing import Generic
 from dataclasses import dataclass, field
 import random
 
@@ -17,9 +16,9 @@ class DepthLimited(Generic[A_inv, I]):
     strategies: dict[I, dict[A_inv, float]] = field(default_factory=dict)
     touched: int = 0
 
-    def _run_iteration(self, game: Callable[[], Game[A_inv, I]]):
-        for p in (0, 1):
-            self.walk(game(), cast(Player, p), self.regrets, self.strategies, 0)
+    def _run_iteration(self, game: type[Game[A_inv, I]]):
+        for p in range(game.players):
+            self.walk(game(), Player(p), self.regrets, self.strategies, 0)
 
     def walk(
         self,

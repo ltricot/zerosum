@@ -1,3 +1,12 @@
+# experimental
+# thompson sampling is one of the the simplest algos for armed bandit problems
+# wonder if it can learn to play imperfect information games ? my hunch is that
+# you should average the strategies found by TS just like one does with CFR ; but
+# TS should explore the game more effectively since it is designed to do so.
+# additionnally, there is no reason to stop learning when playing against an opponent
+# TS can learn to exploit ! ofc the abstraction needs to be really small. or perhaps
+# somesort of a contextual bandit to learn faster.
+
 import numpy as np
 
 from typing import Generic, TypeVar

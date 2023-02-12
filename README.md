@@ -148,7 +148,11 @@ def basic(infoset: PInfoSet):
     return tuple(bets)
 ```
 
-## CFR
+## Don't read the CFR papers ; find slides
+
+CFR is really a collection of regret learners, each associated to an information set. Starting from there we'd like to let each of them learn independently what to do in each situation. The only complication comes from the fact that information sets contain game tree nodes which won't be reached with uniform probability, because the other players can distinguish between nodes which are equivalent from the player's point of view.
+
+A regret learner selects an action, is rewarded, and updates its strategy accordingly. It knows nothing of how the rewarded is computed. In our case it seems the reward is computed by letting the player and its opponent finish the game. This isn't quite true: unlike perfect information games, the reward also depends on the past (so to speak). We can model the regret learner's game by bringing the past in the future: that is, after the learner selects an action, one of the game tree nodes of the information set is sampled and the game continues until it yields a reward. The probability distribution over the game tree nodes in the information set depends on the strategies of the other players (chance, and the opponent !). CFR is the algorithm we use to compute this distribution.
 
 Some variants of CFR are implemented in `zerosum.algorithms`:
 - Vanilla CFR
@@ -156,4 +160,4 @@ Some variants of CFR are implemented in `zerosum.algorithms`:
 - External Sampling MCCFR with regret-matching+ instead of vanilla regret matching
 - External Sampling MCCFR with linear discounting of regrets and the average strategy
 
-In practice the latter variant was found to work well.
+In practice the latter variant worked well.

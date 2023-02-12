@@ -1,4 +1,5 @@
 from typing import cast
+from typing import ClassVar
 from dataclasses import dataclass
 
 from ..game import Player
@@ -19,8 +20,14 @@ class Bid:
 
 @dataclass(slots=True, frozen=True)
 class Game:
+    players: ClassVar[int] = 2
+
     utility: int
     history: tuple[Bid, ...] = ()
+
+    @classmethod
+    def default(cls):
+        return cls(3)
 
     @property
     def terminal(self):

@@ -1,5 +1,4 @@
-from typing import cast, Generic
-from typing import Callable
+from typing import Generic
 from dataclasses import dataclass, field
 import random
 
@@ -9,7 +8,7 @@ from .cfr import matching
 
 # https://arxiv.org/pdf/1407.5042.pdf
 # the only differences with external sampling cfr are:
-# - the strategy updates are linearly weighted (as in linear CFR)
+# - the strategy updates are linearly weighted
 # - the regrets are clipped above 0 when the strategy is updated
 #   (regret matching+ learner)
 # apparently CFR+ doesn't help when used with MCCFR, so maybe this file is
@@ -21,9 +20,9 @@ class ESCFRP(Generic[A_inv, I]):
     touched: int = 0
     t: int = 1
 
-    def _run_iteration(self, game: Callable[[], Game[A_inv, I]]):
-        for p in (0, 1):
-            self.walk(game(), cast(Player, p), self.regrets, self.strategies, self.t)
+    def _run_iteration(self, game: type[Game[A_inv, I]]):
+        for p in range(game.players):
+            self.walk(game.default(), Player(p), self.regrets, self.strategies)
 
         self.t += 1
 
@@ -33,7 +32,6 @@ class ESCFRP(Generic[A_inv, I]):
         player: Player,
         regrets: dict[I, dict[A_inv, float]],
         strategies: dict[I, dict[A_inv, float]],
-        t: int,
     ):
         self.touched += 1
 
@@ -42,7 +40,7 @@ class ESCFRP(Generic[A_inv, I]):
 
         if game.chance:
             action = game.sample()
-            return self.walk(game.apply(action), player, regrets, strategies, t)
+            return self.walk(game.apply(action), player, regrets, strategies)
 
         infoset = game.infoset(game.active)
         actions = infoset.actions()
@@ -59,10 +57,10 @@ class ESCFRP(Generic[A_inv, I]):
 
         if game.active != player:
             (action,) = random.choices(actions, weights=strategy)
-            value = self.walk(game.apply(action), player, regrets, strategies, t)
+            value = self.walk(game.apply(action), player, regrets, strategies)
 
             for action, p in zip(actions, strategy):
-                S[action] += t * p
+                S[action] += self.t * p
                 R[action] = max(0, R[action])
 
             return value
@@ -71,7 +69,7 @@ class ESCFRP(Generic[A_inv, I]):
         value = 0
 
         for action, p in zip(actions, strategy):
-            cf = self.walk(game.apply(action), player, regrets, strategies, t)
+            cf = self.walk(game.apply(action), player, regrets, strategies)
             cfs[action] = cf
             value += p * cf
 
@@ -79,13 +77,6 @@ class ESCFRP(Generic[A_inv, I]):
             R[action] += cfs[action] - value
 
         return value
-
-
-from typing import cast, Generic
-from typing import Callable
-from dataclasses import dataclass, field
-
-from ..game import Game, Player, A_inv, I
 
 
 def matching(regrets: list[float], inplace: bool = True):
@@ -107,10 +98,12 @@ class CFRP(Generic[A_inv, I]):
     regrets: dict[I, dict[A_inv, float]] = field(default_factory=dict)
     strategies: dict[I, dict[A_inv, float]] = field(default_factory=dict)
     touched: int = 0
+    t: int = 1
 
-    def _run_iteration(self, game: Callable[[], Game[A_inv, I]]):
-        for p in (0, 1):
-            self.walk(game(), cast(Player, p), 1, 1, self.regrets, self.strategies)
+    def _run_iteration(self, game: type[Game[A_inv, I]]):
+        for p in range(game.players):
+            self.walk(game.default(), Player(p), 1, 1, self.regrets, self.strategies)
+        self.t += 1
 
     def walk(
         self,
@@ -170,6 +163,6 @@ class CFRP(Generic[A_inv, I]):
         if game.active == player:
             for action, p in zip(actions, strategy):
                 R[action] = max(0, R[action] + pmi * (cfs[action] - value))  # rm+
-                S[action] += pi * p
+                S[action] += self.t * pi * p
 
         return value

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import cast
+from typing import ClassVar
 from dataclasses import dataclass
 import enum
 
@@ -23,7 +24,13 @@ class InfoSet:
 
 @dataclass(slots=True, frozen=True)
 class RPS:
+    players: ClassVar[int] = 2
+
     history: tuple[Action, ...] = ()
+
+    @classmethod
+    def default(cls):
+        return cls()
 
     @property
     def terminal(self):

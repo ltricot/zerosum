@@ -1,5 +1,4 @@
-from typing import cast, Generic
-from typing import Callable
+from typing import Generic
 from dataclasses import dataclass, field
 import random
 
@@ -23,9 +22,9 @@ class ESLCFR(Generic[A_inv, I]):
     touched: int = 0
     period: int = 0
 
-    def _run_iteration(self, game: Callable[[], Game[A_inv, I]]):
+    def _run_iteration(self, game: type[Game[A_inv, I]]):
         for p in (0, 1):
-            self.walk(game(), cast(Player, p), self.regrets, self.strategies)
+            self.walk(game(), Player(p), self.regrets, self.strategies)
 
         if self._touched > self.threshold:
             self._touched = 0
